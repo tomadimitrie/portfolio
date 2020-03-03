@@ -8,16 +8,24 @@
     "start": "next start"
   },
   "dependencies": {
+    "browser-detect": "^0.2.28",
     "framer-motion": "^1.8.4",
+    "glsl-noise": "^0.0.0",
+    "gsap": "^3.2.4",
     "next": "9.2.1",
     "react": "16.12.0",
-    "react-dom": "16.12.0"
+    "react-dom": "16.12.0",
+    "three": "^0.114.0"
   },
   "devDependencies": {
     "@types/node": "^13.7.6",
     "@types/react": "^16.9.23",
+    "glslify": "^7.0.0",
+    "glslify-import-loader": "^0.1.2",
+    "glslify-loader": "^2.0.0",
     "node-sass": "^4.13.1",
     "prettier": "^1.19.1",
+    "raw-loader": "^4.0.0",
     "styled-jsx-plugin-sass": "^1.0.0",
     "typescript": "^3.8.2"
   }
