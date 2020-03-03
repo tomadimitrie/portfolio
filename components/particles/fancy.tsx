@@ -2,36 +2,16 @@ import React from "react";
 import WebGLView from "./WebGLView";
 
 const Fancy = () => {
-  const ref = React.useRef<HTMLDivElement | null>(null);
-  const webgl = React.useRef<WebGLView>();
-
-  const animate = () => {
-    webgl.current.update();
-    webgl.current.draw();
-    requestAnimationFrame(animate);
-  };
-
-  const resize = () => {
-    webgl.current.resize();
-  };
+  const ref = React.useRef<HTMLDivElement>();
 
   React.useEffect(() => {
-    webgl.current = new WebGLView();
-    ref.current.appendChild(webgl.current.renderer.domElement);
-    animate();
-    resize();
-    window.addEventListener("resize", resize);
+    new WebGLView(ref);
   }, []);
 
   return (
     <>
-      <div ref={ref} id="particles" />
-      <style jsx>{`
-        #particles {
-          width: 100vw;
-          height: calc(100vh - 50px);
-        }
-      `}</style>
+      <div ref={ref} />
+      <style jsx>{``}</style>
     </>
   );
 };

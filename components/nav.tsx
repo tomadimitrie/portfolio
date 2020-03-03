@@ -1,4 +1,5 @@
 import React from "react";
+import Constants from "../constants";
 
 type Tab = {
   name: string;
@@ -119,7 +120,7 @@ const Nav = () => {
       <style jsx>{`
         #nav {
           width: calc(100% - 40px);
-          height: 50px;
+          height: ${Constants.navHeight}px;
           border-bottom: 1px solid gray;
           display: flex;
           align-items: center;

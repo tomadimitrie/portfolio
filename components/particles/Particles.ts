@@ -4,8 +4,9 @@ import TouchTexture from "./TouchTexture";
 import WebGLView from "./WebGLView";
 
 import { TweenLite, Quad } from "gsap";
+import Constants from "../../constants";
 
-const glslify = require('glslify');
+const glslify = require("glslify");
 
 export default class Particles {
   webgl: WebGLView;
@@ -18,16 +19,17 @@ export default class Particles {
   touch: TouchTexture;
   hitArea: THREE.Mesh;
   handlerInteractiveMove: () => void;
+  currentWindowWidth: number
+  currentWindowHeight: number
 
   constructor(webgl: WebGLView) {
+    this.currentWindowWidth = window.innerWidth;
+    this.currentWindowHeight = window.innerHeight;
     this.webgl = webgl;
     this.container = new THREE.Object3D();
-  }
-
-  init(src) {
     const loader = new THREE.TextureLoader();
 
-    loader.load(src, texture => {
+    loader.load("image.jpg", texture => {
       this.texture = texture;
       this.texture.minFilter = THREE.LinearFilter;
       this.texture.magFilter = THREE.LinearFilter;
@@ -36,7 +38,7 @@ export default class Particles {
       this.width = texture.image.width;
       this.height = texture.image.height;
 
-      this.initPoints(true);
+      this.initPoints();
       this.initHitArea();
       this.initTouch();
       this.resize();
@@ -44,31 +46,27 @@ export default class Particles {
     });
   }
 
-  initPoints(discard) {
+  initPoints = () => {
     this.numPoints = this.width * this.height;
 
-    let numVisible = this.numPoints;
-    let threshold = 0;
-    let originalColors;
+    let numVisible = 0;
+    let threshold = 34;
 
-    if (discard) {
-      numVisible = 0;
-      threshold = 34;
+    const img = this.texture.image;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-      const img = this.texture.image;
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+    canvas.width = this.width;
+    canvas.height = this.height;
+    ctx.scale(1, -1);
+    ctx.drawImage(img, 0, 0, this.width, this.height * -1);
 
-      canvas.width = this.width;
-      canvas.height = this.height;
-      ctx.scale(1, -1);
-      ctx.drawImage(img, 0, 0, this.width, this.height * -1);
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let originalColors = Float32Array.from(imgData.data);
 
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      originalColors = Float32Array.from(imgData.data);
-
-      for (let i = 0; i < this.numPoints; i++) {
-        if (originalColors[i * 4] > threshold) numVisible++;
+    for (let i = 0; i < this.numPoints; i++) {
+      if (originalColors[i * 4] > threshold) {
+        numVisible++;
       }
     }
 
@@ -84,8 +82,8 @@ export default class Particles {
 
     const material = new THREE.RawShaderMaterial({
       uniforms,
-      vertexShader: glslify(require('./particle.vert')),
-      fragmentShader: glslify(require('./particle.frag')),
+      vertexShader: glslify(require("./particle.vert")),
+      fragmentShader: glslify(require("./particle.frag")),
       depthTest: false,
       transparent: true,
     });
@@ -106,7 +104,6 @@ export default class Particles {
     uvs.setXYZ(3, 1.0, 1.0, 0.0);
     geometry.setAttribute("uv", uvs);
 
-    // index
     geometry.setIndex(
       new THREE.BufferAttribute(new Uint16Array([0, 2, 1, 2, 3, 1]), 1)
     );
@@ -116,7 +113,9 @@ export default class Particles {
     const angles = new Float32Array(numVisible);
 
     for (let i = 0, j = 0; i < this.numPoints; i++) {
-      if (discard && originalColors[i * 4] <= threshold) continue;
+      if (originalColors[i * 4] <= threshold) {
+        continue;
+      }
 
       offsets[j * 3] = i % this.width;
       offsets[j * 3 + 1] = Math.floor(i / this.width);
@@ -143,16 +142,16 @@ export default class Particles {
 
     this.object3D = new THREE.Mesh(geometry, material);
     this.container.add(this.object3D);
-  }
+  };
 
-  initTouch() {
+  initTouch = () => {
     if (!this.touch) {
       this.touch = new TouchTexture(this);
     }
     (this.object3D.material as any).uniforms.uTouch.value = this.touch.texture;
-  }
+  };
 
-  initHitArea() {
+  initHitArea = () => {
     const geometry = new THREE.PlaneGeometry(this.width, this.height, 1, 1);
     const material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
@@ -162,20 +161,18 @@ export default class Particles {
     material.visible = false;
     this.hitArea = new THREE.Mesh(geometry, material);
     this.container.add(this.hitArea);
-  }
+  };
 
-  addListeners() {
-    this.handlerInteractiveMove = this.onInteractiveMove.bind(this);
-
+  addListeners = () => {
     this.webgl.interactive.addListener(
       "interactive-move",
-      this.handlerInteractiveMove
+      this.onInteractiveMove
     );
     this.webgl.interactive.objects.push(this.hitArea);
     this.webgl.interactive.enable();
-  }
+  };
 
-  removeListeners() {
+  removeListeners = () => {
     this.webgl.interactive.removeListener(
       "interactive-move",
       this.handlerInteractiveMove
@@ -186,17 +183,17 @@ export default class Particles {
     );
     this.webgl.interactive.objects.splice(index, 1);
     this.webgl.interactive.disable();
-  }
+  };
 
-  update(delta) {
+  update = delta => {
     if (!this.object3D) {
       return;
     }
     this.touch.update();
     (this.object3D.material as any).uniforms.uTime.value += delta;
-  }
+  };
 
-  show(time = 1.0) {
+  show = (time = 1.0) => {
     TweenLite.fromTo(
       (this.object3D.material as any).uniforms.uSize,
       time,
@@ -214,9 +211,9 @@ export default class Particles {
     );
 
     this.addListeners();
-  }
+  };
 
-  hide(_destroy, time = 0.8) {
+  hide = (_destroy, time = 0.8) => {
     return new Promise((resolve, reject) => {
       TweenLite.to((this.object3D.material as any).uniforms.uRandom, time, {
         value: 5.0,
@@ -235,9 +232,9 @@ export default class Particles {
 
       this.removeListeners();
     });
-  }
+  };
 
-  destroy() {
+  destroy = () => {
     if (!this.object3D) {
       return;
     }
@@ -252,20 +249,27 @@ export default class Particles {
     this.hitArea.geometry.dispose();
     (this.hitArea.material as any).dispose();
     this.hitArea = null;
-  }
-  resize() {
+  };
+
+  resize = () => {
     if (!this.object3D) {
       return;
     }
-    const scale = this.webgl.fovHeight / this.height;
+    const heightScale = this.webgl.fovHeight / this.height;
+    const widthScale = this.webgl.fovWidth / this.width;
+
+    const scale = this.currentWindowHeight !== window.innerHeight ? heightScale : widthScale;
     this.object3D.scale.set(scale, scale, 1);
     this.hitArea.scale.set(scale, scale, 1);
-  }
 
-  onInteractiveMove(e) {
+    this.currentWindowWidth = window.innerWidth;
+    this.currentWindowHeight = window.innerHeight;
+  };
+
+  onInteractiveMove = e => {
     const uv = e.intersectionData.uv;
     if (this.touch) {
       this.touch.addTouch(uv);
     }
-  }
+  };
 }

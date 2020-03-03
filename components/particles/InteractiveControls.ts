@@ -2,6 +2,7 @@ import EventEmitter from "events";
 import * as THREE from "three";
 import browser from "browser-detect";
 import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
+import Constants from "../../constants";
 
 const isSupported = () => {
   let passiveSupported = false;
@@ -25,9 +26,9 @@ const passiveEvent = () => {
 };
 
 export default class InteractiveControls extends EventEmitter.EventEmitter {
-  _enabled: boolean;
+  enabled: boolean;
   camera: THREE.Camera;
-  el: HTMLCanvasElement | Window;
+  el: HTMLCanvasElement;
   plane: THREE.Plane;
   raycaster: THREE.Raycaster;
   mouse: THREE.Vector2;
@@ -46,15 +47,10 @@ export default class InteractiveControls extends EventEmitter.EventEmitter {
   };
   intersectionData: THREE.Intersection;
 
-  get enabled() {
-    return this._enabled;
-  }
-
   constructor(camera: THREE.Camera, el: HTMLCanvasElement) {
     super();
-
     this.camera = camera;
-    this.el = el || window;
+    this.el = el;
 
     this.plane = new THREE.Plane();
     this.raycaster = new THREE.Raycaster();
@@ -74,23 +70,23 @@ export default class InteractiveControls extends EventEmitter.EventEmitter {
     this.enable();
   }
 
-  enable() {
+  enable = () => {
     if (this.enabled) {
       return;
     }
     this.addListeners();
-    this._enabled = true;
-  }
+    this.enabled = true;
+  };
 
-  disable() {
+  disable = () => {
     if (!this.enabled) {
       return;
     }
     this.removeListeners();
-    this._enabled = false;
-  }
+    this.enabled = false;
+  };
 
-  addListeners() {
+  addListeners = () => {
     if (this.browser.mobile) {
       this.el.addEventListener("touchstart", this.onDown, passiveEvent());
       this.el.addEventListener("touchmove", this.onMove, passiveEvent());
@@ -101,9 +97,9 @@ export default class InteractiveControls extends EventEmitter.EventEmitter {
       this.el.addEventListener("mouseup", this.onUp);
       this.el.addEventListener("mouseleave", this.onLeave);
     }
-  }
+  };
 
-  removeListeners() {
+  removeListeners = () => {
     if (this.browser.mobile) {
       this.el.removeEventListener("touchstart", this.onDown);
       this.el.removeEventListener("touchmove", this.onMove);
@@ -114,26 +110,18 @@ export default class InteractiveControls extends EventEmitter.EventEmitter {
       this.el.removeEventListener("mouseup", this.onUp);
       this.el.removeEventListener("mouseleave", this.onLeave);
     }
-  }
+  };
 
-  resize(x, y, width, height) {
-    if (x || y || width || height) {
-      this.rect = { x, y, width, height };
-    } else if (this.el === window) {
-      this.rect = {
-        x: 0,
-        y: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-    } else {
+  resize = () => {
       this.rect = (this.el as HTMLCanvasElement).getBoundingClientRect();
-    }
-  }
+  };
 
   onMove = e => {
     const t = e.touches ? e.touches[0] : e;
-    const touch = { x: t.clientX, y: t.clientY };
+    const touch = {
+      x: t.clientX,
+      y: t.clientY - Constants.navHeight,
+    };
 
     this.mouse.x = ((touch.x + this.rect.x) / this.rect.width) * 2 - 1;
     this.mouse.y = -((touch.y + this.rect.y) / this.rect.height) * 2 + 1;
