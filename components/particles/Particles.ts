@@ -29,7 +29,7 @@ export default class Particles {
     this.container = new THREE.Object3D();
     const loader = new THREE.TextureLoader();
 
-    loader.load("image.jpg", texture => {
+    loader.load("image.png", texture => {
       this.texture = texture;
       this.texture.minFilter = THREE.LinearFilter;
       this.texture.magFilter = THREE.LinearFilter;
@@ -116,14 +116,10 @@ export default class Particles {
       if (originalColors[i * 4] <= threshold) {
         continue;
       }
-
       offsets[j * 3] = i % this.width;
       offsets[j * 3 + 1] = Math.floor(i / this.width);
-
       indices[j] = i;
-
       angles[j] = Math.random() * Math.PI;
-
       j++;
     }
 
@@ -258,9 +254,8 @@ export default class Particles {
     const heightScale = this.webgl.fovHeight / this.height;
     const widthScale = this.webgl.fovWidth / this.width;
 
-    const scale = this.currentWindowHeight !== window.innerHeight ? heightScale : widthScale;
-    this.object3D.scale.set(scale, scale, 1);
-    this.hitArea.scale.set(scale, scale, 1);
+    this.object3D.scale.set(widthScale, heightScale, 1);
+    this.hitArea.scale.set(widthScale, heightScale, 1);
 
     this.currentWindowWidth = window.innerWidth;
     this.currentWindowHeight = window.innerHeight;

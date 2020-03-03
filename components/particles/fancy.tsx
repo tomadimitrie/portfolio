@@ -8,12 +8,7 @@ const Fancy = () => {
     new WebGLView(ref);
   }, []);
 
-  return (
-    <>
-      <div ref={ref} />
-      <style jsx>{``}</style>
-    </>
-  );
+  return <div ref={ref} />;
 };
 
 export default Fancy;
