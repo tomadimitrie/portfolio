@@ -16,7 +16,7 @@ const Fancy = () => {
   };
 
   React.useEffect(() => {
-    webgl.current = new WebGLView(ref);
+    webgl.current = new WebGLView();
     ref.current.appendChild(webgl.current.renderer.domElement);
     animate();
     resize();
