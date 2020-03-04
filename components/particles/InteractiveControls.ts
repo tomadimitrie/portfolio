@@ -36,14 +36,13 @@ export default class InteractiveControls extends EventEmitter.EventEmitter {
     this.hovered = null;
     this.selected = null;
     this.isDown = false;
-    this.enable();
+    this.addListeners();
   }
 
   enable = () => {
     if (this.enabled) {
       return;
     }
-    this.addListeners();
     this.enabled = true;
   };
 

@@ -19,12 +19,12 @@ export default class Particles {
   touch: TouchTexture;
   hitArea: THREE.Mesh;
   handlerInteractiveMove: () => void;
-  currentWindowWidth: number
-  currentWindowHeight: number
+  currentWindowWidth: number;
+  currentWindowHeight: number;
 
   constructor(webgl: WebGLView) {
     this.currentWindowWidth = window.innerWidth;
-    this.currentWindowHeight = window.innerHeight;
+    this.currentWindowHeight = window.innerHeight - Constants.navHeight;
     this.webgl = webgl;
     this.container = new THREE.Object3D();
     const loader = new THREE.TextureLoader();
@@ -258,7 +258,7 @@ export default class Particles {
     this.hitArea.scale.set(widthScale, heightScale, 1);
 
     this.currentWindowWidth = window.innerWidth;
-    this.currentWindowHeight = window.innerHeight;
+    this.currentWindowHeight = window.innerHeight - Constants.navHeight;
   };
 
   onInteractiveMove = e => {
