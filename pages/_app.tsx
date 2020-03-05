@@ -1,5 +1,4 @@
 import { AppProps } from "next/app";
-import Nav from "../components/nav";
 import Head from "next/head";
 
 const App = (props: AppProps) => {
@@ -17,7 +16,6 @@ const App = (props: AppProps) => {
           crossOrigin="anonymous"
         />
       </Head>
-      <Nav />
       <props.Component {...props.pageProps} />
       <style jsx global>{`
         html,

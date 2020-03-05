@@ -1,6 +1,5 @@
 import EventEmitter from "events";
 import * as THREE from "three";
-import Constants from "../../constants";
 
 export default class InteractiveControls extends EventEmitter.EventEmitter {
   enabled: boolean;
@@ -82,7 +81,7 @@ export default class InteractiveControls extends EventEmitter.EventEmitter {
     const t = e.touches ? e.touches[0] : e;
     const touch = {
       x: t.clientX,
-      y: t.clientY - Constants.navHeight,
+      y: t.clientY,
     };
 
     this.mouse.x = ((touch.x + this.rect.x) / this.rect.width) * 2 - 1;

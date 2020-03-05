@@ -2,7 +2,6 @@ import React from "react";
 import * as THREE from "three";
 import InteractiveControls from "./InteractiveControls";
 import Particles from "./Particles";
-import Constants from "../../constants";
 
 export default class WebGLView {
   scene: THREE.Scene;
@@ -28,7 +27,7 @@ export default class WebGLView {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       50,
-      window.innerWidth / (window.innerHeight - Constants.navHeight),
+      window.innerWidth / window.innerHeight,
       1,
       10000
     );
@@ -63,7 +62,7 @@ export default class WebGLView {
 
   resize = () => {
     this.camera.aspect =
-      window.innerWidth / (window.innerHeight - Constants.navHeight);
+      window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.fovHeight =
       2 *
@@ -72,7 +71,7 @@ export default class WebGLView {
     this.fovWidth = this.fovHeight * this.camera.aspect;
     this.renderer.setSize(
       window.innerWidth,
-      window.innerHeight - Constants.navHeight
+      window.innerHeight
     );
     this.interactive.resize();
     this.particles.resize();

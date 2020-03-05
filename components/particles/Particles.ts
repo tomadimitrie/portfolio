@@ -4,7 +4,6 @@ import TouchTexture from "./TouchTexture";
 import WebGLView from "./WebGLView";
 
 import { TweenLite, Quad } from "gsap";
-import Constants from "../../constants";
 
 const glslify = require("glslify");
 
@@ -24,7 +23,7 @@ export default class Particles {
 
   constructor(webgl: WebGLView) {
     this.currentWindowWidth = window.innerWidth;
-    this.currentWindowHeight = window.innerHeight - Constants.navHeight;
+    this.currentWindowHeight = window.innerHeight;
     this.webgl = webgl;
     this.container = new THREE.Object3D();
     const loader = new THREE.TextureLoader();
@@ -258,7 +257,7 @@ export default class Particles {
     this.hitArea.scale.set(widthScale, heightScale, 1);
 
     this.currentWindowWidth = window.innerWidth;
-    this.currentWindowHeight = window.innerHeight - Constants.navHeight;
+    this.currentWindowHeight = window.innerHeight;
   };
 
   onInteractiveMove = e => {
