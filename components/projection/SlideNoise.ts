@@ -17,12 +17,13 @@ import Poisson from "poisson-disk-sampling";
 
 export const ANIMATION_DURATION = 1;
 
-const TEXTURE_SCALE = 0.7;
+const TEXTURE_SCALE = 1;
 
 const STARTING_Z = -1;
 
 export default class SlideNoise extends THREE.Group {
   webgl: WebGLApp;
+  texture: THREE.Texture;
   width: number;
   height: number;
   points: Poisson;
@@ -41,16 +42,10 @@ export default class SlideNoise extends THREE.Group {
   constructor(webgl: WebGLApp, texture: any) {
     super();
     this.webgl = webgl;
-    const ratio = texture.image.naturalWidth / texture.image.naturalHeight;
-    if (ratio < 1) {
-      this.height = visibleHeightAtZDepth(0, webgl.camera) * TEXTURE_SCALE;
-      this.width = this.height * ratio;
-    } else {
-      this.width = visibleWidthAtZDepth(0, webgl.camera) * TEXTURE_SCALE;
-      this.height = this.width * (1 / ratio);
-    }
-    this.width *= 1.5;
-    this.height *= 1.1;
+    this.texture = texture;
+    const ratio = texture.image.width / texture.image.height;
+    this.height = visibleHeightAtZDepth(5, webgl.camera) * TEXTURE_SCALE;
+    this.width = this.height * ratio;
 
     this.points = poisson([this.width, this.height], 7.73, 9.66);
 
@@ -78,8 +73,9 @@ export default class SlideNoise extends THREE.Group {
       camera: webgl.camera,
       texture,
       textureScale: TEXTURE_SCALE,
-      color: new THREE.Color("#9e9b94"),
+      color: new THREE.Color("#000000"),
       instanced: true,
+      cover: true,
     });
 
     allocateProjectionData(geometry, this.NUM_INSTANCES);
@@ -241,5 +237,9 @@ export default class SlideNoise extends THREE.Group {
       this.instancedMesh.setMatrixAt(i, this.dummy.matrix);
       this.instancedMesh.instanceMatrix.needsUpdate = true;
     }
+  }
+
+  resize = () => {
+
   }
 }

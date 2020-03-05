@@ -97,6 +97,11 @@ export default class WebGLApp {
       this.camera.aspect = this.width / this.height;
     }
     this.camera.updateProjectionMatrix();
+    this.scene.traverse(obj => {
+      if (obj instanceof SlideNoise) {
+        obj.resize();
+      }
+    });
     this.draw();
     return this;
   };
