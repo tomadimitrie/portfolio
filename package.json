@@ -21,7 +21,7 @@
     "gsap": "^3.2.4",
     "image-promise": "^7.0.0",
     "lodash": "^4.17.15",
-    "next": "9.2.1",
+    "next": "9.3.2",
     "orbit-controls": "^1.2.4",
     "p-map": "^3.0.0",
     "poisson-disk-sampling": "1.0.6",
