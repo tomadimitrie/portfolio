@@ -918,6 +918,11 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
+"@types/react-sizes@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-sizes/-/react-sizes-2.0.0.tgz#28dab82c402527cfdaf4ad933f844276412bbaf6"
+  integrity sha512-XS3lv09Hxmy6AMnnzoUoZcuPAinhVjYPa5dUwfKz5HnEKbeT4dv06xYtM/BKUVsFQmjnkSmegLcfBYK0cOc1aw==
+
 "@types/react@^16.9.23":
   version "16.9.23"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.23.tgz#1a66c6d468ba11a8943ad958a8cb3e737568271c"

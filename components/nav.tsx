@@ -1,4 +1,5 @@
 import React from "react";
+import useWindowSize from "../helpers/useWindowSize";
 
 type Tab = {
   name: string;
@@ -28,12 +29,14 @@ const tabs: Tab[] = [
   },
 ];
 
-const kAnimationDuration = 1000;
+const kAnimationDuration = 500;
 
-const Nav = () => {
+const Nav = props => {
   const [currentTabIndex, setCurrentTabIndex] = React.useState<number>(2);
   // prettier-ignore
   const [previousTabIndex, setPreviousTabIndex] = React.useState<number | null>(null);
+
+  const windowSize = useWindowSize();
 
   const renderTab = (tab: Tab, index: number) => {
     return (
@@ -48,7 +51,7 @@ const Nav = () => {
           }}
         >
           <i className={`fa fa-${tab.icon} tab-icon`} />
-          {index === currentTabIndex && (
+          {windowSize.width > 400 && index === currentTabIndex && (
             <div
               className={`tab-text ${index === previousTabIndex &&
                 "tab-text-exit"}`}
