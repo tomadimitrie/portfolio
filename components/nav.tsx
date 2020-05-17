@@ -1,9 +1,13 @@
 import React from "react";
 import useWindowSize from "../helpers/useWindowSize";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
 
 type Tab = {
   name: string;
   icon: string;
+  href?: string;
 };
 
 const tabs: Tab[] = [
@@ -18,6 +22,7 @@ const tabs: Tab[] = [
   {
     name: "home",
     icon: "home",
+    href: "",
   },
   {
     name: "skills",
@@ -29,36 +34,86 @@ const tabs: Tab[] = [
   },
 ];
 
-const kAnimationDuration = 500;
-
-const Nav = props => {
-  const [currentTabIndex, setCurrentTabIndex] = React.useState<number>(2);
+const Nav = () => {
   // prettier-ignore
-  const [previousTabIndex, setPreviousTabIndex] = React.useState<number | null>(null);
-
+  const [currentTabIndex, setCurrentTabIndex] = React.useState<number | null>(null);
   const windowSize = useWindowSize();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const onRouteChange = (url: string) => {
+      const name = url.substr(1);
+      const index = tabs.findIndex(
+        (tab: Tab) => tab.name === name || tab.href === name
+      );
+      if (index !== -1) {
+        setCurrentTabIndex(index);
+      }
+    };
+    Router.events.on("routeChangeStart", onRouteChange);
+    onRouteChange(router.pathname);
+    return () => {
+      Router.events.off("routeChangeStart", onRouteChange);
+    };
+  }, []);
+
+  const variants = {
+    icon: {
+      idle: {
+        color: "rgba(255, 255, 255, 0.5)",
+      },
+      active: {
+        color: "rgba(255, 255, 255, 1)",
+        transition: {
+          duration: 0,
+        },
+      },
+    },
+    text: {
+      hidden: {
+        maxWidth: 0,
+      },
+      shown: {
+        maxWidth: "100%",
+        transition: {
+          duration: 1,
+        },
+      },
+      exiting: {
+        maxWidth: 0,
+      },
+    },
+  };
+
+  const onTabClick = (tab: Tab) => {
+    Router.push(`/${tab.href ?? tab.name}`);
+  };
 
   const renderTab = (tab: Tab, index: number) => {
     return (
       <React.Fragment key={tab.name}>
-        <div
-          className="tab"
-          onClick={() => {
-            setPreviousTabIndex(currentTabIndex);
-            setTimeout(() => {
-              setCurrentTabIndex(index);
-            }, kAnimationDuration);
-          }}
-        >
-          <i className={`fa fa-${tab.icon} tab-icon`} />
-          {windowSize.width > 400 && index === currentTabIndex && (
-            <div
-              className={`tab-text ${index === previousTabIndex &&
-                "tab-text-exit"}`}
-            >
-              {tab.name}
-            </div>
-          )}
+        <div className="tab" onClick={() => onTabClick(tab)}>
+          <motion.i
+            className={`fa fa-${tab.icon} tab-icon`}
+            variants={variants.icon}
+            animate={index === currentTabIndex ? "active" : "idle"}
+            whileHover={{
+              color: "rgba(255, 255, 255, 1)",
+            }}
+          />
+          <AnimatePresence>
+            {windowSize.width > 600 && index === currentTabIndex && (
+              <motion.div
+                variants={variants.text}
+                initial="hidden"
+                animate="shown"
+                exit="exiting"
+                className="tab-text"
+              >
+                {tab.name}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <style jsx>{`
           .tab {
@@ -67,47 +122,20 @@ const Nav = props => {
             align-items: center;
             justify-content: center;
             flex-direction: row;
-            color: ${index === currentTabIndex ? "white" : "gray"};
             font-size: 20px;
             width: 20vw;
-
-            &:hover {
-              color: white;
-              transition: color ${kAnimationDuration}ms;
-            }
           }
-          .tab-icon {
+          :global(.tab-icon) {
             margin: 0 10px;
             width: 20px;
           }
-          .tab-text {
+          :global(.tab-text) {
+            color: white;
             font-family: "Oxanium", sans-serif;
             font-weight: 700;
-            animation: reveal forwards;
-            /* styled-jsx bug? interpolation for duration inside animation shorthand compiles into jsx tag string instead of the number itself */
-            animation-duration: ${kAnimationDuration}ms;
             text-overflow: clip;
             white-space: nowrap;
             overflow: hidden;
-          }
-          .tab-text-exit {
-            animation-name: exit;
-          }
-          @keyframes reveal {
-            from {
-              max-width: 0;
-            }
-            to {
-              max-width: 100%;
-            }
-          }
-          @keyframes exit {
-            from {
-              max-width: 100%;
-            }
-            to {
-              max-width: 0;
-            }
           }
         `}</style>
       </React.Fragment>

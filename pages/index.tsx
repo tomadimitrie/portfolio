@@ -2,6 +2,7 @@ import React from "react";
 import { NextPage, GetServerSideProps } from "next";
 import { motion } from "framer-motion";
 import firebase from "../helpers/firebase";
+import withPageTransition from "../helpers/withPageTransition";
 
 const Index: NextPage<{ text: string }> = props => {
   const getIndex = (lineIndex: number, letterIndex: number) =>
@@ -103,7 +104,7 @@ const Index: NextPage<{ text: string }> = props => {
   );
 };
 
-export default Index;
+export default withPageTransition(Index);
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const doc = await firebase
