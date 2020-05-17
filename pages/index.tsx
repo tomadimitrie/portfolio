@@ -1,32 +1,51 @@
 import React from "react";
-import { NextPage } from "next";
+import { NextPage, GetServerSideProps } from "next";
 import { motion } from "framer-motion";
+import firebase from "../helpers/firebase";
 
-const kAnimationDuration = 1000;
-const kColorAnimationDuration = 250;
-const text = "Hello,\nI am a software developer\nand graphic designer";
-
-const Index: NextPage = () => {
-  const [letterState, setLetterState] = React.useState<{
-    [index: number]: {
-      isBouncing: boolean;
-      isColored: boolean;
-    };
-  }>({});
-  const getIndex = (lineIndex, letterIndex) =>
-    text
-      .split("\n")
+const Index: NextPage<{ text: string }> = props => {
+  const getIndex = (lineIndex: number, letterIndex: number) =>
+    props.text
+      .split("\\n")
       .slice(0, lineIndex)
       .reduce(
         (accumulator, currentValue) =>
           accumulator + currentValue.split("").length,
         letterIndex
       );
+
+  const variants = {
+    hidden: {
+      opacity: 0,
+    },
+    show: (custom: number) => ({
+      opacity: 1,
+      transition: {
+        delay: 1 + custom / 20,
+      },
+    }),
+    hovered: {
+      color: "rgba(0, 128, 0, 1)",
+      transform: [
+        "scale3d(1, 1, 1)",
+        "scale3d(1.25, 0.75, 1)",
+        "scale3d(0.75, 1.25, 1)",
+        "scale3d(1.15, 0.85, 1)",
+        "scale3d(0.95, 1.05, 1)",
+        "scale3d(1.05, 0.95, 1)",
+        "scale3d(1, 1, 1)",
+      ],
+      transition: {
+        times: [0, 0.3, 0.4, 0.5, 0.65, 0.75, 1],
+      },
+    },
+  };
+
   return (
     <>
       <div id="home">
         <div id="letters">
-          {text.split("\n").map((line, lineIndex) => (
+          {props.text.split("\\n").map((line, lineIndex) => (
             <div key={`line-${lineIndex}`}>
               {line.split("").map((letter, letterIndex) =>
                 letter === " " ? (
@@ -36,52 +55,13 @@ const Index: NextPage = () => {
                   />
                 ) : (
                   <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{
-                      duration: 1,
-                      delay: getIndex(lineIndex, letterIndex) / 20,
-                    }}
+                    whileHover="hovered"
+                    initial="hidden"
+                    animate="show"
+                    variants={variants}
+                    custom={getIndex(lineIndex, letterIndex)}
                     key={`letter-${getIndex(lineIndex, letterIndex)}`}
-                    className={`letter 
-                ${
-                  letterState[getIndex(lineIndex, letterIndex)]?.isBouncing
-                    ? "bounce"
-                    : ""
-                }
-                ${
-                  letterState[getIndex(lineIndex, letterIndex)]?.isColored
-                    ? "colored"
-                    : ""
-                }`}
-                    onMouseEnter={() => {
-                      setLetterState(letterState => ({
-                        ...letterState,
-                        [getIndex(lineIndex, letterIndex)]: {
-                          ...letterState[getIndex(lineIndex, letterIndex)],
-                          isBouncing: true,
-                          isColored: true,
-                        },
-                      }));
-                      setTimeout(() => {
-                        setLetterState(letterState => ({
-                          ...letterState,
-                          [getIndex(lineIndex, letterIndex)]: {
-                            ...letterState[getIndex(lineIndex, letterIndex)],
-                            isBouncing: false,
-                          },
-                        }));
-                      }, kAnimationDuration);
-                    }}
-                    onMouseLeave={() => {
-                      setLetterState(letterState => ({
-                        ...letterState,
-                        [getIndex(lineIndex, letterIndex)]: {
-                          ...letterState[getIndex(lineIndex, letterIndex)],
-                          isColored: false,
-                        },
-                      }));
-                    }}
+                    className="letter"
                   >
                     {letter}
                   </motion.span>
@@ -117,41 +97,6 @@ const Index: NextPage = () => {
           font-weight: 700;
           display: inline-block;
           cursor: default;
-          transition: color;
-          transition-duration: ${kColorAnimationDuration}ms;
-
-          @at-root :global(.letter.bounce) {
-            animation-name: bounce;
-            animation-duration: ${kAnimationDuration}ms;
-            animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-          }
-
-          @at-root :global(.letter.colored) {
-            color: green;
-          }
-        }
-        @keyframes bounce {
-          from {
-            transform: scale3d(1, 1, 1);
-          }
-          30% {
-            transform: scale3d(1.25, 0.75, 1);
-          }
-          40% {
-            transform: scale3d(0.75, 1.25, 1);
-          }
-          50% {
-            transform: scale3d(1.15, 0.85, 1);
-          }
-          65% {
-            transform: scale3d(0.95, 1.05, 1);
-          }
-          75% {
-            transform: scale3d(1.05, 0.95, 1);
-          }
-          to {
-            transform: scale3d(1, 1, 1);
-          }
         }
       `}</style>
     </>
@@ -159,3 +104,16 @@ const Index: NextPage = () => {
 };
 
 export default Index;
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  const doc = await firebase
+    .firestore()
+    .collection("texts")
+    .doc("landing")
+    .get();
+  return {
+    props: {
+      text: doc.data().text,
+    },
+  };
+};
