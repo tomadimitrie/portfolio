@@ -8,16 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
-    "@types/react-sizes": "^2.0.0",
-    "framer-motion": "^1.8.4",
-    "next": "9.2.1",
-    "react": "16.12.0",
-    "react-dom": "16.12.0"
+    "framer-motion": "^1.11.0",
+    "next": "^9.4.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
   },
   "devDependencies": {
-    "@types/node": "^13.7.6",
+    "@types/node": "^14.0.0",
     "@types/react": "^16.9.23",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.0",
     "prettier": "^1.19.1",
     "styled-jsx-plugin-sass": "^1.0.0",
     "typescript": "^3.8.2"

@@ -1,8 +1,10 @@
 import React from "react";
 import { NextPage } from "next";
+import { motion } from "framer-motion";
 
 const kAnimationDuration = 1000;
 const kColorAnimationDuration = 250;
+const text = "Hello,\nI am a software developer\nand graphic designer";
 
 const Index: NextPage = () => {
   const [letterState, setLetterState] = React.useState<{
@@ -11,47 +13,81 @@ const Index: NextPage = () => {
       isColored: boolean;
     };
   }>({});
+  const getIndex = (lineIndex, letterIndex) =>
+    text
+      .split("\n")
+      .slice(0, lineIndex)
+      .reduce(
+        (accumulator, currentValue) =>
+          accumulator + currentValue.split("").length,
+        letterIndex
+      );
   return (
     <>
       <div id="home">
         <div id="letters">
-          {"HELLO".split("").map((letter, index) => (
-            <span
-              key={`letter-${letter}-${index}`}
-              className={`letter ${
-                letterState[index]?.isBouncing ? "bounce" : ""
-              } ${letterState[index]?.isColored ? "colored" : ""}`}
-              onMouseEnter={() => {
-                setLetterState(letterState => ({
-                  ...letterState,
-                  [index]: {
-                    ...letterState[index],
-                    isBouncing: true,
-                    isColored: true,
-                  },
-                }));
-                setTimeout(() => {
-                  setLetterState(letterState => ({
-                    ...letterState,
-                    [index]: {
-                      ...letterState[index],
-                      isBouncing: false,
-                    },
-                  }));
-                }, kAnimationDuration);
-              }}
-              onMouseLeave={() => {
-                setLetterState(letterState => ({
-                  ...letterState,
-                  [index]: {
-                    ...letterState[index],
-                    isColored: false,
-                  },
-                }));
-              }}
-            >
-              {letter}
-            </span>
+          {text.split("\n").map((line, lineIndex) => (
+            <div key={`line-${lineIndex}`}>
+              {line.split("").map((letter, letterIndex) =>
+                letter === " " ? (
+                  <span
+                    className="space"
+                    key={`space-${getIndex(lineIndex, letterIndex)}`}
+                  />
+                ) : (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{
+                      duration: 1,
+                      delay: getIndex(lineIndex, letterIndex) / 20,
+                    }}
+                    key={`letter-${getIndex(lineIndex, letterIndex)}`}
+                    className={`letter 
+                ${
+                  letterState[getIndex(lineIndex, letterIndex)]?.isBouncing
+                    ? "bounce"
+                    : ""
+                }
+                ${
+                  letterState[getIndex(lineIndex, letterIndex)]?.isColored
+                    ? "colored"
+                    : ""
+                }`}
+                    onMouseEnter={() => {
+                      setLetterState(letterState => ({
+                        ...letterState,
+                        [getIndex(lineIndex, letterIndex)]: {
+                          ...letterState[getIndex(lineIndex, letterIndex)],
+                          isBouncing: true,
+                          isColored: true,
+                        },
+                      }));
+                      setTimeout(() => {
+                        setLetterState(letterState => ({
+                          ...letterState,
+                          [getIndex(lineIndex, letterIndex)]: {
+                            ...letterState[getIndex(lineIndex, letterIndex)],
+                            isBouncing: false,
+                          },
+                        }));
+                      }, kAnimationDuration);
+                    }}
+                    onMouseLeave={() => {
+                      setLetterState(letterState => ({
+                        ...letterState,
+                        [getIndex(lineIndex, letterIndex)]: {
+                          ...letterState[getIndex(lineIndex, letterIndex)],
+                          isColored: false,
+                        },
+                      }));
+                    }}
+                  >
+                    {letter}
+                  </motion.span>
+                )
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -60,13 +96,21 @@ const Index: NextPage = () => {
           width: 100%;
           height: 100%;
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
         }
         #letters {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+        }
+        .space {
+          width: 20px;
           display: inline-block;
         }
-        .letter {
+        :global(.letter) {
           font-size: 70px;
           color: white;
           font-family: "Oxanium", sans-serif;
@@ -75,14 +119,16 @@ const Index: NextPage = () => {
           cursor: default;
           transition: color;
           transition-duration: ${kColorAnimationDuration}ms;
-        }
-        .letter.bounce {
-          animation-name: bounce;
-          animation-duration: ${kAnimationDuration}ms;
-          animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .letter.colored {
-          color: green;
+
+          @at-root :global(.letter.bounce) {
+            animation-name: bounce;
+            animation-duration: ${kAnimationDuration}ms;
+            animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+          }
+
+          @at-root :global(.letter.colored) {
+            color: green;
+          }
         }
         @keyframes bounce {
           from {
