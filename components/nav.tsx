@@ -149,7 +149,7 @@ const Nav = () => {
       </div>
       <style jsx>{`
         #nav {
-          width: calc(100% - 40px);
+          width: 100%;
           height: 50px;
           border-bottom: 1px solid gray;
           display: flex;

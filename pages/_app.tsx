@@ -33,6 +33,9 @@ const App = (props: AppProps) => {
           padding: 0;
           overflow: hidden;
         }
+        * {
+          box-sizing: border-box;
+        }
       `}</style>
     </>
   );
