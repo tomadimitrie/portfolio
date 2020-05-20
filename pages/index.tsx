@@ -3,6 +3,7 @@ import { NextPage, GetServerSideProps } from "next";
 import { motion } from "framer-motion";
 import firebase from "../helpers/firebase";
 import withPageTransition from "../helpers/withPageTransition";
+import AnimatedBackground from "../components/AnimatedBackground";
 
 const Index: NextPage<{ text: string }> = props => {
   const getIndex = (lineIndex: number, letterIndex: number) =>
@@ -50,6 +51,7 @@ const Index: NextPage<{ text: string }> = props => {
   return (
     <>
       <div id="home">
+        <AnimatedBackground />
         <div id="letters">
           {props.text.split("\\n").map((line, lineIndex) => (
             <div key={`line-${lineIndex}`} className="line">
@@ -84,13 +86,15 @@ const Index: NextPage<{ text: string }> = props => {
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding-top: 50px;
+          position: relative;
         }
         #letters {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
           justify-content: center;
+          position: absolute;
+          margin-top: 50px;
         }
         .space {
           width: 2.5vw;
