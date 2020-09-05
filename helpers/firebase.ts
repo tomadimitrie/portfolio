@@ -8,7 +8,7 @@ export default firebase.apps.length === 0
       databaseURL: process.env.firebase_database_url,
       projectId: process.env.firebase_project_id,
       storageBucket: process.env.firebase_storage_bucket,
-      messagingSenderId: process.env.firebase_messagingSenderID,
+      messagingSenderId: process.env.firebase_messaging_sender_id,
       appId: process.env.firebase_app_id,
     })
   : firebase.app();

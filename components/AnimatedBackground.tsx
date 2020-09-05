@@ -1,84 +1,92 @@
 import React from "react";
 import * as THREE from "three";
+import { Canvas, useFrame, useThree } from "react-three-fiber";
 
-const AnimatedBackground = () => {
-  const particlesRef = React.useRef<HTMLDivElement | null>(null);
-  React.useEffect(() => {
-    const camera = new THREE.PerspectiveCamera(
-      40,
-      particlesRef.current.clientWidth / particlesRef.current.clientHeight,
-      1,
-      15000
-    );
-    camera.position.z = 250;
+const Mesh = ({ index }: { index: number }) => {
+  const ref = React.useRef<THREE.Mesh | null>(null);
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color().setHSL(0.51, 0.4, 0.01);
-    scene.fog = new THREE.Fog(scene.background.getHex(), 3500, 15000);
-
-    const geometry = new THREE.BoxBufferGeometry(250, 250, 250);
-    const material = new THREE.MeshPhongMaterial({
-      color: 0x00ff00,
-      specular: 0x00ff00,
-      shininess: 50,
-    });
-
-    const meshes: THREE.Mesh[] = [];
-
-    for (let i = 0; i < 3000; i++) {
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.name = `cube-${i}`;
-      mesh.position.x = 8000 * (2.0 * Math.random() - 1.0);
-      mesh.position.y = 8000 * (2.0 * Math.random() - 1.0);
-      mesh.position.z = 8000 * (2.0 * Math.random() - 1.0);
-
-      mesh.rotation.x = Math.random() * Math.PI;
-      mesh.rotation.y = Math.random() * Math.PI;
-      mesh.rotation.z = Math.random() * Math.PI;
-
-      scene.add(mesh);
-      meshes.push(mesh);
-    }
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.1);
-    dirLight.position.set(0, -1, 0).normalize();
-    dirLight.color.setHSL(0.1, 0.7, 0.5);
-    scene.add(dirLight);
-
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-    });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    particlesRef.current.appendChild(renderer.domElement);
-
-    const onWindowResize = () => {
-      renderer.setSize(
-        particlesRef.current.clientWidth,
-        particlesRef.current.clientHeight
-      );
-      camera.aspect =
-        particlesRef.current.clientWidth / particlesRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-    };
-    const animate = () => {
-      requestAnimationFrame(animate);
-      meshes.forEach(mesh => {
-        const value = Math.random() * 0.02;
-        mesh.rotation.x += value;
-        mesh.rotation.y += value;
-        mesh.rotation.z += value;
-      });
-      renderer.render(scene, camera);
-    };
-    animate();
-    window.addEventListener("resize", onWindowResize, false);
-  }, []);
+  useFrame(() => {
+    const value = Math.random() * 0.02;
+    ref.current.rotation.x += value;
+    ref.current.rotation.y += value;
+    ref.current.rotation.z += value;
+  });
 
   return (
+    <mesh
+      ref={ref}
+      name={`cube-${index}`}
+      position={[
+        8000 * (2.0 * Math.random() - 1.0),
+        8000 * (2.0 * Math.random() - 1.0),
+        8000 * (2.0 * Math.random() - 1.0),
+      ]}
+      rotation={[
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+      ]}
+    >
+      <boxBufferGeometry attach="geometry" args={[250, 250, 250]} />
+      <meshPhongMaterial
+        attach="material"
+        color={0x00ff00}
+        /* @ts-ignore */
+        specular={0xffff00}
+        shininess={25}
+      />
+    </mesh>
+  );
+};
+
+const Camera = () => {
+  const ref = React.useRef<THREE.PerspectiveCamera | null>(null);
+  const { setDefaultCamera, size } = useThree();
+  React.useEffect(() => {
+    setDefaultCamera(ref.current);
+  }, []);
+  useFrame(() => ref.current.updateMatrixWorld());
+  return (
+    <perspectiveCamera
+      ref={ref}
+      fov={40}
+      aspect={size.width / size.height}
+      near={1}
+      far={15000}
+      position={[0, 0, 250]}
+    />
+  );
+};
+
+const AnimatedBackground = () => {
+  return (
     <>
-      <div id="particles" ref={particlesRef}></div>
+      <Canvas
+        style={{
+          background: "#010303",
+        }}
+        resize={{
+          debounce: 0,
+          scroll: false,
+        }}
+        colorManagement={true}
+      >
+        <Camera />
+        <directionalLight
+          color={0xffffff}
+          intensity={0.1}
+          position={[0, -1, 0]}
+        />
+        <fog
+          /* @ts-ignore */
+          color={0x010303}
+          near={3500}
+          far={15000}
+        />
+        {Array.from({ length: 3000 }, (_x, i) => i).map((index) => (
+          <Mesh index={index} key={`cube-${index}`} />
+        ))}
+      </Canvas>
       <style jsx>{`
         #particles {
           width: 100%;
