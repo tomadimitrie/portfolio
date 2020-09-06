@@ -8,11 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
-    "firebase": "^7.14.4",
-    "framer-motion": "^1.11.0",
-    "next": "^9.4.0",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
+    "firebase": "^7.19.1",
+    "framer-motion": "^1.11.1",
+    "next": "^9.5.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "react-three-fiber": "^4.2.21",
     "three": "^0.116.1"
   },
@@ -22,6 +22,6 @@
     "node-sass": "^4.14.0",
     "prettier": "^1.19.1",
     "styled-jsx-plugin-sass": "^1.0.0",
-    "typescript": "^3.8.2"
+    "typescript": "^4.0.2"
   }
 }
