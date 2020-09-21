@@ -1,7 +1,6 @@
 import { AppProps } from "next/app";
 import Nav from "../components/nav";
 import Head from "next/head";
-import { AnimatePresence, motion } from "framer-motion";
 
 const App = (props: AppProps) => {
   return (
@@ -19,9 +18,7 @@ const App = (props: AppProps) => {
         />
       </Head>
       <Nav />
-      <AnimatePresence exitBeforeEnter>
-        <props.Component {...props.pageProps} key={props.router.pathname} />
-      </AnimatePresence>
+      <props.Component {...props.pageProps} key={props.router.pathname} />
       <style jsx global>{`
         html,
         body,

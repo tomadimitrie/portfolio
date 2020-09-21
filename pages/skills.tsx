@@ -1,19 +1,18 @@
 import React from "react";
+import { View, StyleSheet } from "react-native";
 import { NextPage } from "next";
 import withPageTransition from "../helpers/withPageTransition";
 
 const Skills: NextPage = () => {
-  return (
-    <div id="skills">
-      <style jsx>{`
-        #skills {
-          width: 100%;
-          height: 100%;
-          background-color: purple;
-        }
-      `}</style>
-    </div>
-  );
+  return <View style={styles.skills} />;
 };
 
 export default withPageTransition(Skills);
+
+const styles = StyleSheet.create({
+  skills: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "green",
+  },
+});

@@ -31,8 +31,7 @@ const Mesh = ({ index }: { index: number }) => {
       <meshPhongMaterial
         attach="material"
         color={0x00ff00}
-        /* @ts-ignore */
-        specular={0xffff00}
+        specular={new THREE.Color(0xffff00)}
         shininess={25}
       />
     </mesh>
@@ -78,8 +77,7 @@ const AnimatedBackground = () => {
           position={[0, -1, 0]}
         />
         <fog
-          /* @ts-ignore */
-          color={0x010303}
+          color={new THREE.Color(0x010303)}
           near={3500}
           far={15000}
         />

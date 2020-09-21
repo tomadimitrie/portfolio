@@ -1,8 +1,9 @@
 import React from "react";
-import useWindowSize from "../helpers/useWindowSize";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { View, Text, StyleSheet, Animated } from "react-native";
 import Router, { useRouter } from "next/router";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { useDimensions } from "react-native-web-hooks";
+import { useFonts, Oxanium_700Bold } from "@expo-google-fonts/oxanium";
 
 type Tab = {
   name: string;
@@ -34,11 +35,53 @@ const tabs: Tab[] = [
   },
 ];
 
+const AnimatedFontAwesome5 = Animated.createAnimatedComponent(FontAwesome5);
+
 const Nav = () => {
   // prettier-ignore
   const [currentTabIndex, setCurrentTabIndex] = React.useState<number | null>(null);
-  const windowSize = useWindowSize();
+  const { window } = useDimensions();
   const router = useRouter();
+  const [fontsLoaded] = useFonts({
+    Oxanium_700Bold,
+  });
+
+  const colorAnims = Array.from(
+    { length: tabs.length },
+    () => React.useState(new Animated.Value(0))[0]
+  );
+
+  const colors = colorAnims.map((anim) =>
+    anim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["gray", "white"],
+    })
+  );
+
+  const widthAnims = Array.from(
+    { length: tabs.length },
+    () => React.useState(new Animated.Value(0))[0]
+  );
+
+  const widths = widthAnims.map((anim) =>
+    anim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["0%", "100%"],
+    })
+  );
+
+  const animate = (index, value) => {
+    Animated.parallel([
+      Animated.timing(colorAnims[index], {
+        toValue: value,
+        duration: 1000,
+      }),
+      Animated.timing(widthAnims[index], {
+        toValue: value,
+        duration: 1000,
+      }),
+    ]).start();
+  };
 
   React.useEffect(() => {
     const onRouteChange = (url: string) => {
@@ -48,6 +91,9 @@ const Nav = () => {
       );
       if (index !== -1) {
         setCurrentTabIndex(index);
+        Array.from({ length: tabs.length }, (x, i) => i).forEach((i) =>
+          animate(i, index === i)
+        );
       }
     };
     Router.events.on("routeChangeStart", onRouteChange);
@@ -57,34 +103,6 @@ const Nav = () => {
     };
   }, []);
 
-  const variants = {
-    icon: {
-      idle: {
-        color: "rgba(255, 255, 255, 0.5)",
-      },
-      active: {
-        color: "rgba(255, 255, 255, 1)",
-        transition: {
-          duration: 0,
-        },
-      },
-    },
-    text: {
-      hidden: {
-        maxWidth: 0,
-      },
-      shown: {
-        maxWidth: "100%",
-        transition: {
-          duration: 1,
-        },
-      },
-      exiting: {
-        maxWidth: 0,
-      },
-    },
-  };
-
   const onTabClick = (tab: Tab) => {
     Router.push(`/${tab.href ?? tab.name}`);
   };
@@ -92,75 +110,66 @@ const Nav = () => {
   const renderTab = (tab: Tab, index: number) => {
     return (
       <React.Fragment key={tab.name}>
-        <div className="tab" onClick={() => onTabClick(tab)}>
-          <motion.i
-            className={`fa fa-${tab.icon} tab-icon`}
-            variants={variants.icon}
-            animate={index === currentTabIndex ? "active" : "idle"}
-            whileHover={{
-              color: "rgba(255, 255, 255, 1)",
-            }}
+        <View style={styles.tab} onClick={() => onTabClick(tab)}>
+          <AnimatedFontAwesome5
+            name={tab.icon}
+            size={24}
+            color={colors[index]}
           />
-          <AnimatePresence>
-            {windowSize.width > 600 && index === currentTabIndex && (
-              <motion.div
-                variants={variants.text}
-                initial="hidden"
-                animate="shown"
-                exit="exiting"
-                className="tab-text"
-              >
-                {tab.name}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        <style jsx>{`
-          .tab {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: row;
-            font-size: 20px;
-            width: 20vw;
-          }
-          :global(.tab-icon) {
-            margin: 0 10px;
-            width: 20px;
-          }
-          :global(.tab-text) {
-            color: white;
-            font-family: "Oxanium", sans-serif;
-            font-weight: 700;
-            text-overflow: clip;
-            white-space: nowrap;
-            overflow: hidden;
-          }
-        `}</style>
+          {window.width > 800 && fontsLoaded && (
+            <Animated.Text
+              style={[styles.tabText, { maxWidth: widths[index] }]}
+            >
+              {tab.name}
+            </Animated.Text>
+          )}
+        </View>
       </React.Fragment>
     );
   };
 
   return (
     <>
-      <div id="nav">
+      <View style={styles.nav}>
         {tabs.map((tab: Tab, index: number) => renderTab(tab, index))}
-      </div>
-      <style jsx>{`
-        #nav {
-          width: 100%;
-          height: 50px;
-          border-bottom: 1px solid gray;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          flex-direction: row;
-          padding: 0 20px;
-        }
-      `}</style>
+      </View>
     </>
   );
 };
 
 export default Nav;
+
+const styles = StyleSheet.create({
+  nav: {
+    width: "100%",
+    height: 50,
+    borderBottomWidth: 1,
+    borderBottomStyle: "solid",
+    borderBottomColor: "gray",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    paddingHorizontal: 20,
+  },
+  tab: {
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  tabIcon: {
+    marginHorizontal: 10,
+    width: 20,
+  },
+  tabText: {
+    color: "white",
+    fontFamily: "Oxanium_700Bold",
+    fontSize: 20,
+    paddingLeft: 10,
+    textOverflow: "clip",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+  },
+});
