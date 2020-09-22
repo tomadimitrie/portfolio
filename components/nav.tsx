@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Pressable, StyleSheet, Animated } from "react-native";
 import Router, { useRouter } from "next/router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDimensions } from "react-native-web-hooks";
@@ -109,22 +109,18 @@ const Nav = () => {
 
   const renderTab = (tab: Tab, index: number) => {
     return (
-      <React.Fragment key={tab.name}>
-        <View style={styles.tab} onClick={() => onTabClick(tab)}>
-          <AnimatedFontAwesome5
-            name={tab.icon}
-            size={24}
-            color={colors[index]}
-          />
-          {window.width > 800 && fontsLoaded && (
-            <Animated.Text
-              style={[styles.tabText, { maxWidth: widths[index] }]}
-            >
-              {tab.name}
-            </Animated.Text>
-          )}
-        </View>
-      </React.Fragment>
+      <Pressable
+        key={tab.name}
+        style={styles.tab}
+        onPress={() => onTabClick(tab)}
+      >
+        <AnimatedFontAwesome5 name={tab.icon} size={24} color={colors[index]} />
+        {window.width > 800 && fontsLoaded && (
+          <Animated.Text style={[styles.tabText, { maxWidth: widths[index] }]}>
+            {tab.name}
+          </Animated.Text>
+        )}
+      </Pressable>
     );
   };
 
