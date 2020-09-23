@@ -121,10 +121,10 @@ export default Index;
 const styles = StyleSheet.create({
   home: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     overflow: "scroll",
+    alignItems: "center",
     paddingHorizontal: 25,
+    paddingTop: 25,
   },
   letters: {
     justifyContent: "center",
