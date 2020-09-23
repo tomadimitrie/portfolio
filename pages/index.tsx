@@ -76,8 +76,9 @@ const Index: NextPage<{ text: string }> = (props) => {
       {fontsLoaded && (
         <View style={styles.letters}>
           {props.text.split("\\n").map((line, lineIndex) => (
-            <Text key={`line-${lineIndex}`} style={styles.line}>
-              {line.split("").map((letter, letterIndex) => {
+            <Text key={`line-${lineIndex}`} style={styles.letter}>
+              {line}
+              {/* {line.split("").map((letter, letterIndex) => {
                 const index = getIndex(lineIndex, letterIndex);
                 return (
                   <Hoverable
@@ -107,7 +108,7 @@ const Index: NextPage<{ text: string }> = (props) => {
                     )}
                   </Hoverable>
                 );
-              })}
+              })} */}
             </Text>
           ))}
         </View>
