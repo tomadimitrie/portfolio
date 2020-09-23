@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     paddingHorizontal: 20,
-    position: "fixed",
+    position: "sticky",
     top: 0,
     left: 0,
     zIndex: 99999,

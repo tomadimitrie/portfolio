@@ -122,20 +122,23 @@ export default Index;
 const styles = StyleSheet.create({
   home: {
     flex: 1,
+    flexDirection: "row",
     overflow: "scroll",
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 25,
     paddingTop: 25,
+    boxSizing: "border-box",
   },
   letters: {
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   letter: {
-    fontSize: 70,
+    fontSize: 60,
     color: "white",
     fontFamily: "Oxanium_700Bold",
-    display: "inline-block",
-    cursor: "default",
+    // display: "inline-block",
+    // cursor: "default",
   },
 });
 
