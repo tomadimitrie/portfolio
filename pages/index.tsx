@@ -2,11 +2,14 @@ import React from "react";
 import { View, StyleSheet, Text, Animated } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
-import withPageTransition from "../helpers/withPageTransition";
-import AnimatedBackground from "../components/AnimatedBackground";
-import { useHover, Hoverable } from "react-native-web-hooks";
+import { Hoverable } from "react-native-web-hooks";
+import { useFonts, Oxanium_700Bold } from "@expo-google-fonts/oxanium";
 
 const Index: NextPage<{ text: string }> = (props) => {
+  const [fontsLoaded] = useFonts({
+    Oxanium_700Bold,
+  });
+
   const getIndex = (lineIndex: number, letterIndex: number) =>
     props.text
       .split("\\n")
@@ -70,76 +73,64 @@ const Index: NextPage<{ text: string }> = (props) => {
 
   return (
     <View style={styles.home}>
-      {/*<AnimatedBackground />*/}
-      <View style={styles.letters}>
-        {props.text.split("\\n").map((line, lineIndex) => (
-          <Text key={`line-${lineIndex}`} style={styles.line}>
-            {line.split("").map((letter, letterIndex) => {
-              const index = getIndex(lineIndex, letterIndex);
-              return (
-                <Hoverable
-                  key={`hoverable-${index}`}
-                  onHoverIn={() => animate(index, false)}
-                  onHoverOut={() => animate(index, true)}
-                >
-                  {(_isHovered) => (
-                    <Animated.Text
-                      style={[
-                        letter === " " ? styles.space : styles.letter,
-                        {
-                          transform: [
-                            {
-                              scaleX: scaleAnims[index].x,
-                            },
-                            {
-                              scaleY: scaleAnims[index].y,
-                            },
-                          ],
-                          color: colors[index],
-                        },
-                      ]}
-                    >
-                      {letter}
-                    </Animated.Text>
-                  )}
-                </Hoverable>
-              );
-            })}
-          </Text>
-        ))}
-      </View>
+      {fontsLoaded && (
+        <View style={styles.letters}>
+          {props.text.split("\\n").map((line, lineIndex) => (
+            <Text key={`line-${lineIndex}`} style={styles.line}>
+              {line.split("").map((letter, letterIndex) => {
+                const index = getIndex(lineIndex, letterIndex);
+                return (
+                  <Hoverable
+                    key={`hoverable-${index}`}
+                    onHoverIn={() => animate(index, false)}
+                    onHoverOut={() => animate(index, true)}
+                  >
+                    {(_isHovered) => (
+                      <Animated.Text
+                        style={[
+                          styles.letter,
+                          {
+                            transform: [
+                              {
+                                scaleX: scaleAnims[index].x,
+                              },
+                              {
+                                scaleY: scaleAnims[index].y,
+                              },
+                            ],
+                            color: colors[index],
+                          },
+                        ]}
+                      >
+                        {letter}
+                      </Animated.Text>
+                    )}
+                  </Hoverable>
+                );
+              })}
+            </Text>
+          ))}
+        </View>
+      )}
     </View>
   );
 };
 
-export default withPageTransition(Index);
+export default Index;
 
 const styles = StyleSheet.create({
   home: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
+    flex: 1,
     alignItems: "center",
-    position: "relative",
+    justifyContent: "center",
+    overflow: "scroll",
+    paddingHorizontal: 25,
   },
   letters: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
     justifyContent: "center",
-    position: "absolute",
-    marginTop: "50px",
-  },
-  space: {
-    width: "2.5vw",
-    display: "inline-block",
-  },
-  line: {
-    display: "flex",
   },
   letter: {
-    fontSize: "6vw",
+    fontSize: 70,
     color: "white",
     fontFamily: "Oxanium_700Bold",
     display: "inline-block",
@@ -150,12 +141,12 @@ const styles = StyleSheet.create({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const doc = await firebase
     .firestore()
-    .collection("texts")
-    .doc("landing")
+    .collection("landing")
+    .doc("text")
     .get();
   return {
     props: {
-      text: doc.data().text,
+      text: doc.data().value,
     },
   };
 };

@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "react-three-fiber";
 
@@ -57,9 +58,9 @@ const Camera = () => {
   );
 };
 
-const AnimatedBackground = () => {
+const AnimatedBackground = (props: any) => {
   return (
-    <>
+    <View {...props}>
       <Canvas
         style={{
           background: "#010303",
@@ -76,23 +77,12 @@ const AnimatedBackground = () => {
           intensity={0.1}
           position={[0, -1, 0]}
         />
-        <fog
-          color={new THREE.Color(0x010303)}
-          near={3500}
-          far={15000}
-        />
+        <fog color={new THREE.Color(0x010303)} near={3500} far={15000} />
         {Array.from({ length: 3000 }, (_x, i) => i).map((index) => (
           <Mesh index={index} key={`cube-${index}`} />
         ))}
       </Canvas>
-      <style jsx>{`
-        #particles {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-        }
-      `}</style>
-    </>
+    </View>
   );
 };
 

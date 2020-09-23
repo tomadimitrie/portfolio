@@ -39,7 +39,6 @@ const AnimatedFontAwesome5 = Animated.createAnimatedComponent(FontAwesome5);
 
 const Nav = () => {
   // prettier-ignore
-  const [currentTabIndex, setCurrentTabIndex] = React.useState<number | null>(null);
   const { window } = useDimensions();
   const router = useRouter();
   const [fontsLoaded] = useFonts({
@@ -90,7 +89,6 @@ const Nav = () => {
         (tab: Tab) => tab.name === name || tab.href === name
       );
       if (index !== -1) {
-        setCurrentTabIndex(index);
         Array.from({ length: tabs.length }, (x, i) => i).forEach((i) =>
           animate(i, index === i)
         );
@@ -125,11 +123,9 @@ const Nav = () => {
   };
 
   return (
-    <>
-      <View style={styles.nav}>
-        {tabs.map((tab: Tab, index: number) => renderTab(tab, index))}
-      </View>
-    </>
+    <View style={styles.nav}>
+      {tabs.map((tab: Tab, index: number) => renderTab(tab, index))}
+    </View>
   );
 };
 
@@ -137,20 +133,23 @@ export default Nav;
 
 const styles = StyleSheet.create({
   nav: {
-    width: "100%",
+    backgroundColor: "black",
     height: 50,
+    width: "100%",
     borderBottomWidth: 1,
     borderBottomStyle: "solid",
     borderBottomColor: "gray",
-    display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row",
     paddingHorizontal: 20,
+    position: "fixed",
+    top: 0,
+    left: 0,
+    zIndex: 99999,
   },
   tab: {
     cursor: "pointer",
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
