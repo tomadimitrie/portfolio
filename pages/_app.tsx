@@ -15,7 +15,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       <style jsx global>{`
         html,
         body,
-        __next {
+        #__next {
           overflow: hidden;
           width: 100%;
           height: 100%;

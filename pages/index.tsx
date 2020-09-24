@@ -10,21 +10,30 @@ const Index: NextPage<{ text: string }> = (props) => {
     Oxanium_700Bold,
   });
 
-  const getIndex = (lineIndex: number, letterIndex: number) =>
+  const getIndex = (
+    lineIndex: number,
+    wordIndex: number,
+    letterIndex: number
+  ) =>
     props.text
       .split("\\n")
       .slice(0, lineIndex)
       .reduce(
-        (accumulator, currentValue) =>
-          accumulator + currentValue.split("").length,
-        letterIndex
+        (accumulator, currentValue) => accumulator + currentValue.length,
+        props.text
+          .split("\\n")
+          [lineIndex].split(" ")
+          .slice(0, wordIndex)
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.length,
+            letterIndex
+          )
       );
 
   const letterCount = props.text
     .split("\\n")
     .reduce(
-      (accumulator, currentValue) =>
-        accumulator + currentValue.split("").length,
+      (accumulator, currentValue) => accumulator + currentValue.length,
       0
     );
 
@@ -82,7 +91,7 @@ const Index: NextPage<{ text: string }> = (props) => {
               {line.split(" ").map((word, wordIndex) => (
                 <View key={`word-${wordIndex}`} style={styles.word}>
                   {word.split("").map((letter, letterIndex) => {
-                    const index = getIndex(lineIndex, letterIndex);
+                    const index = getIndex(lineIndex, wordIndex, letterIndex);
                     return (
                       <Hoverable
                         key={`hoverable-${index}`}
