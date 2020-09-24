@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, Animated } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
 import { Hoverable } from "react-native-web-hooks";
@@ -61,12 +61,14 @@ const Index: NextPage<{ text: string }> = (props) => {
           Animated.timing(scaleAnims[index], {
             toValue: value,
             duration: 100,
+            useNativeDriver: true,
           })
         ),
       ]),
       Animated.timing(colorAnims[index], {
         toValue: reverse ? 0 : 1,
         duration: 1000,
+        useNativeDriver: true,
       }),
     ]).start();
   };
@@ -76,40 +78,43 @@ const Index: NextPage<{ text: string }> = (props) => {
       {fontsLoaded && (
         <View style={styles.letters}>
           {props.text.split("\\n").map((line, lineIndex) => (
-            <Text key={`line-${lineIndex}`} style={styles.letter}>
-              {line}
-              {/* {line.split("").map((letter, letterIndex) => {
-                const index = getIndex(lineIndex, letterIndex);
-                return (
-                  <Hoverable
-                    key={`hoverable-${index}`}
-                    onHoverIn={() => animate(index, false)}
-                    onHoverOut={() => animate(index, true)}
-                  >
-                    {(_isHovered) => (
-                      <Animated.Text
-                        style={[
-                          styles.letter,
-                          {
-                            transform: [
-                              {
-                                scaleX: scaleAnims[index].x,
-                              },
-                              {
-                                scaleY: scaleAnims[index].y,
-                              },
-                            ],
-                            color: colors[index],
-                          },
-                        ]}
+            <View key={`line-${lineIndex}`} style={styles.line}>
+              {line.split(" ").map((word, wordIndex) => (
+                <View key={`word-${wordIndex}`} style={styles.word}>
+                  {word.split("").map((letter, letterIndex) => {
+                    const index = getIndex(lineIndex, letterIndex);
+                    return (
+                      <Hoverable
+                        key={`hoverable-${index}`}
+                        onHoverIn={() => animate(index, false)}
+                        onHoverOut={() => animate(index, true)}
                       >
-                        {letter}
-                      </Animated.Text>
-                    )}
-                  </Hoverable>
-                );
-              })} */}
-            </Text>
+                        {(_isHovered) => (
+                          <Animated.Text
+                            style={[
+                              letter === " " ? styles.space : styles.letter,
+                              {
+                                transform: [
+                                  {
+                                    scaleX: scaleAnims[index].x,
+                                  },
+                                  {
+                                    scaleY: scaleAnims[index].y,
+                                  },
+                                ],
+                                color: colors[index],
+                              },
+                            ]}
+                          >
+                            {letter}
+                          </Animated.Text>
+                        )}
+                      </Hoverable>
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
           ))}
         </View>
       )}
@@ -122,27 +127,38 @@ export default Index;
 const styles = StyleSheet.create({
   home: {
     flex: 1,
-    flexDirection: "row",
     overflow: "scroll",
-    alignItems: "center",
-    justifyContent: "center",
     paddingHorizontal: 25,
     paddingTop: 25,
-    boxSizing: "border-box",
   },
   letters: {
-    // justifyContent: "center",
+    margin: "auto",
+    maxWidth: "100%",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  line: {
+    paddingVertical: 10,
+    flexWrap: "wrap",
+    flexDirection: "row",
+  },
+  word: {
+    flexDirection: "row",
+    paddingHorizontal: 7.5,
   },
   letter: {
     fontSize: 60,
     color: "white",
     fontFamily: "Oxanium_700Bold",
-    // display: "inline-block",
-    // cursor: "default",
+    cursor: "default",
+  },
+  space: {
+    width: 15,
   },
 });
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (_context) => {
   const doc = await firebase
     .firestore()
     .collection("landing")

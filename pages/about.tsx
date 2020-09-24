@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  SectionList,
-  Text,
-  Linking,
-  Pressable,
-} from "react-native";
+import { View, StyleSheet, SectionList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
 import {
@@ -17,7 +10,7 @@ import {
 
 type Item = {
   title: string;
-  data: string | string[];
+  data: string[];
   subtitle: string;
 };
 
@@ -32,7 +25,7 @@ const About: NextPage<{ items: Item[] }> = (props) => {
         <SectionList
           keyExtractor={(item, index) => item + index}
           sections={props.items}
-          renderSectionHeader={({ section: { title, data, subtitle } }) => (
+          renderSectionHeader={({ section: { title, _data, subtitle } }) => (
             <Text style={styles.title}>
               {title}: <Text style={styles.text}>{subtitle}</Text>
             </Text>
@@ -64,7 +57,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (_context) => {
   const query = await firebase
     .firestore()
     .collection("about")

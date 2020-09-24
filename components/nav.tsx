@@ -74,10 +74,12 @@ const Nav = () => {
       Animated.timing(colorAnims[index], {
         toValue: value,
         duration: 1000,
+        useNativeDriver: true,
       }),
       Animated.timing(widthAnims[index], {
         toValue: value,
         duration: 1000,
+        useNativeDriver: true,
       }),
     ]).start();
   };
@@ -143,10 +145,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     paddingHorizontal: 20,
-    position: "sticky",
-    top: 0,
-    left: 0,
-    zIndex: 99999,
   },
   tab: {
     cursor: "pointer",

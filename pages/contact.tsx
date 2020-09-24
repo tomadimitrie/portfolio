@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (_context) => {
   const query = await firebase
     .firestore()
     .collection("contact")

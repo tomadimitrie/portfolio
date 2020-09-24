@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Text,
-  Linking,
-  Pressable,
-} from "react-native";
+import { View, StyleSheet, FlatList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
 import {
@@ -14,6 +7,7 @@ import {
   Oxanium_700Bold,
   Oxanium_400Regular,
 } from "@expo-google-fonts/oxanium";
+import { A } from "@expo/html-elements";
 
 type Item = {
   title: string;
@@ -29,17 +23,15 @@ const Projects: NextPage<{ items: Item[] }> = (props) => {
     Oxanium_400Regular,
   });
 
-  const renderLink = (link) => {
-    const isLink = link.startsWith("https://");
-    const node = <Text style={isLink && styles.clickable}>{link}</Text>;
-    if (isLink) {
-      return (
-        <Pressable onPress={() => Linking.openURL(link)}>{node}</Pressable>
-      );
-    } else {
-      return node;
-    }
-  };
+  const renderLink = (link) =>
+    link.startsWith("https://") ? (
+      <A href={link} target="_blank">
+        {link}
+      </A>
+    ) : (
+      <>{link}</>
+    );
+
   return (
     <View style={styles.projects}>
       {fontsLoaded && (
@@ -82,12 +74,9 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 15,
   },
-  clickable: {
-    cursor: "pointer",
-  },
 });
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (_context) => {
   const query = await firebase
     .firestore()
     .collection("projects")
