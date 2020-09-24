@@ -3,13 +3,8 @@ import { View, StyleSheet, Animated } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
 import { Hoverable } from "react-native-web-hooks";
-import { useFonts, Oxanium_700Bold } from "@expo-google-fonts/oxanium";
 
 const Index: NextPage<{ text: string }> = (props) => {
-  const [fontsLoaded] = useFonts({
-    Oxanium_700Bold,
-  });
-
   const getIndex = (
     lineIndex: number,
     wordIndex: number,
@@ -84,49 +79,47 @@ const Index: NextPage<{ text: string }> = (props) => {
 
   return (
     <View style={styles.home}>
-      {fontsLoaded && (
-        <View style={styles.letters}>
-          {props.text.split("\\n").map((line, lineIndex) => (
-            <View key={`line-${lineIndex}`} style={styles.line}>
-              {line.split(" ").map((word, wordIndex) => (
-                <View key={`word-${wordIndex}`} style={styles.word}>
-                  {word.split("").map((letter, letterIndex) => {
-                    const index = getIndex(lineIndex, wordIndex, letterIndex);
-                    return (
-                      <Hoverable
-                        key={`hoverable-${index}`}
-                        onHoverIn={() => animate(index, false)}
-                        onHoverOut={() => animate(index, true)}
-                      >
-                        {(_isHovered) => (
-                          <Animated.Text
-                            style={[
-                              letter === " " ? styles.space : styles.letter,
-                              {
-                                transform: [
-                                  {
-                                    scaleX: scaleAnims[index].x,
-                                  },
-                                  {
-                                    scaleY: scaleAnims[index].y,
-                                  },
-                                ],
-                                color: colors[index],
-                              },
-                            ]}
-                          >
-                            {letter}
-                          </Animated.Text>
-                        )}
-                      </Hoverable>
-                    );
-                  })}
-                </View>
-              ))}
-            </View>
-          ))}
-        </View>
-      )}
+      <View style={styles.letters}>
+        {props.text.split("\\n").map((line, lineIndex) => (
+          <View key={`line-${lineIndex}`} style={styles.line}>
+            {line.split(" ").map((word, wordIndex) => (
+              <View key={`word-${wordIndex}`} style={styles.word}>
+                {word.split("").map((letter, letterIndex) => {
+                  const index = getIndex(lineIndex, wordIndex, letterIndex);
+                  return (
+                    <Hoverable
+                      key={`hoverable-${index}`}
+                      onHoverIn={() => animate(index, false)}
+                      onHoverOut={() => animate(index, true)}
+                    >
+                      {(_isHovered) => (
+                        <Animated.Text
+                          style={[
+                            letter === " " ? styles.space : styles.letter,
+                            {
+                              transform: [
+                                {
+                                  scaleX: scaleAnims[index].x,
+                                },
+                                {
+                                  scaleY: scaleAnims[index].y,
+                                },
+                              ],
+                              color: colors[index],
+                            },
+                          ]}
+                        >
+                          {letter}
+                        </Animated.Text>
+                      )}
+                    </Hoverable>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+        ))}
+      </View>
     </View>
   );
 };

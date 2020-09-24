@@ -9,11 +9,6 @@ import {
 } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
-import {
-  useFonts,
-  Oxanium_700Bold,
-  Oxanium_400Regular,
-} from "@expo-google-fonts/oxanium";
 
 type Item = {
   title: string;
@@ -22,26 +17,20 @@ type Item = {
 };
 
 const Contact: NextPage<{ items: Item[] }> = (props) => {
-  const [fontsLoaded] = useFonts({
-    Oxanium_700Bold,
-    Oxanium_400Regular,
-  });
   return (
     <View style={styles.contact}>
-      {fontsLoaded && (
-        <FlatList
-          data={props.items}
-          keyExtractor={(item) => item.title}
-          renderItem={({ item }) => (
-            <Text style={styles.title}>
-              {`${item.title}: `}
-              <Pressable onPress={() => Linking.openURL(item.href)}>
-                <Text style={styles.text}>{item.value}</Text>
-              </Pressable>
-            </Text>
-          )}
-        />
-      )}
+      <FlatList
+        data={props.items}
+        keyExtractor={(item) => item.title}
+        renderItem={({ item }) => (
+          <Text style={styles.title}>
+            {`${item.title}: `}
+            <Pressable onPress={() => Linking.openURL(item.href)}>
+              <Text style={styles.text}>{item.value}</Text>
+            </Pressable>
+          </Text>
+        )}
+      />
     </View>
   );
 };

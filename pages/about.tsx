@@ -2,11 +2,6 @@ import React from "react";
 import { View, StyleSheet, SectionList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
-import {
-  useFonts,
-  Oxanium_700Bold,
-  Oxanium_400Regular,
-} from "@expo-google-fonts/oxanium";
 
 type Item = {
   title: string;
@@ -15,24 +10,18 @@ type Item = {
 };
 
 const About: NextPage<{ items: Item[] }> = (props) => {
-  const [fontsLoaded] = useFonts({
-    Oxanium_700Bold,
-    Oxanium_400Regular,
-  });
   return (
     <View style={styles.about}>
-      {fontsLoaded && (
-        <SectionList
-          keyExtractor={(item, index) => item + index}
-          sections={props.items}
-          renderSectionHeader={({ section: { title, _data, subtitle } }) => (
-            <Text style={styles.title}>
-              {title}: <Text style={styles.text}>{subtitle}</Text>
-            </Text>
-          )}
-          renderItem={({ item }) => <Text style={styles.text}>{item}</Text>}
-        />
-      )}
+      <SectionList
+        keyExtractor={(item, index) => item + index}
+        sections={props.items}
+        renderSectionHeader={({ section: { title, _data, subtitle } }) => (
+          <Text style={styles.title}>
+            {title}: <Text style={styles.text}>{subtitle}</Text>
+          </Text>
+        )}
+        renderItem={({ item }) => <Text style={styles.text}>{item}</Text>}
+      />
     </View>
   );
 };

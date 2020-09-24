@@ -3,7 +3,6 @@ import { View, Pressable, StyleSheet, Animated } from "react-native";
 import Router, { useRouter } from "next/router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDimensions } from "react-native-web-hooks";
-import { useFonts, Oxanium_700Bold } from "@expo-google-fonts/oxanium";
 
 type Tab = {
   name: string;
@@ -41,9 +40,6 @@ const Nav = () => {
   // prettier-ignore
   const { window } = useDimensions();
   const router = useRouter();
-  const [fontsLoaded] = useFonts({
-    Oxanium_700Bold,
-  });
 
   const colorAnims = Array.from(
     { length: tabs.length },
@@ -115,7 +111,7 @@ const Nav = () => {
         onPress={() => onTabClick(tab)}
       >
         <AnimatedFontAwesome5 name={tab.icon} size={24} color={colors[index]} />
-        {window.width > 800 && fontsLoaded && (
+        {window.width > 800 && (
           <Animated.Text style={[styles.tabText, { maxWidth: widths[index] }]}>
             {tab.name}
           </Animated.Text>

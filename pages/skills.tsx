@@ -2,11 +2,6 @@ import React from "react";
 import { View, StyleSheet, SectionList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
-import {
-  useFonts,
-  Oxanium_700Bold,
-  Oxanium_400Regular,
-} from "@expo-google-fonts/oxanium";
 
 type Skill = {
   title: string;
@@ -14,23 +9,16 @@ type Skill = {
 };
 
 const Skills: NextPage<{ skills: Skill[] }> = (props) => {
-  const [fontsLoaded] = useFonts({
-    Oxanium_700Bold,
-    Oxanium_400Regular,
-  });
-
   return (
     <View style={styles.skills}>
-      {fontsLoaded && (
-        <SectionList
-          keyExtractor={(item, index) => item + index}
-          sections={props.skills}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.title}>{title}</Text>
-          )}
-          renderItem={({ item }) => <Text style={styles.text}>{item}</Text>}
-        />
-      )}
+      <SectionList
+        keyExtractor={(item, index) => item + index}
+        sections={props.skills}
+        renderSectionHeader={({ section: { title } }) => (
+          <Text style={styles.title}>{title}</Text>
+        )}
+        renderItem={({ item }) => <Text style={styles.text}>{item}</Text>}
+      />
     </View>
   );
 };
@@ -59,7 +47,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (_context) => {
   const query = await firebase
     .firestore()
     .collection("skills")

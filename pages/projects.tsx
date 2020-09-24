@@ -2,11 +2,6 @@ import React from "react";
 import { View, StyleSheet, FlatList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
 import firebase from "../helpers/firebase";
-import {
-  useFonts,
-  Oxanium_700Bold,
-  Oxanium_400Regular,
-} from "@expo-google-fonts/oxanium";
 import { A } from "@expo/html-elements";
 
 type Item = {
@@ -18,11 +13,6 @@ type Item = {
 };
 
 const Projects: NextPage<{ items: Item[] }> = (props) => {
-  const [fontsLoaded] = useFonts({
-    Oxanium_700Bold,
-    Oxanium_400Regular,
-  });
-
   const renderLink = (link) =>
     link.startsWith("https://") ? (
       <A href={link} target="_blank">
@@ -34,21 +24,19 @@ const Projects: NextPage<{ items: Item[] }> = (props) => {
 
   return (
     <View style={styles.projects}>
-      {fontsLoaded && (
-        <FlatList
-          data={props.items}
-          keyExtractor={(item) => item.title}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.text}>Description: {item.description}</Text>
-              <Text style={styles.text}>Technologies: {item.technologies}</Text>
-              <Text style={styles.text}>Link: {renderLink(item.link)}</Text>
-              <Text style={styles.text}>Repo: {renderLink(item.repo)}</Text>
-            </View>
-          )}
-        />
-      )}
+      <FlatList
+        data={props.items}
+        keyExtractor={(item) => item.title}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.text}>Description: {item.description}</Text>
+            <Text style={styles.text}>Technologies: {item.technologies}</Text>
+            <Text style={styles.text}>Link: {renderLink(item.link)}</Text>
+            <Text style={styles.text}>Repo: {renderLink(item.repo)}</Text>
+          </View>
+        )}
+      />
     </View>
   );
 };
