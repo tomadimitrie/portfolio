@@ -1,12 +1,14 @@
 import React from "react";
 import { View, StyleSheet, SectionList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
-import firebase from "../helpers/firebase";
+import axios from "axios";
+
+const URL = "https://tomadimitrie-portfolio-backend.herokuapp.com/about";
 
 type Item = {
   title: string;
+  value: string;
   data: string[];
-  subtitle: string;
 };
 
 const About: NextPage<{ items: Item[] }> = (props) => {
@@ -15,9 +17,9 @@ const About: NextPage<{ items: Item[] }> = (props) => {
       <SectionList
         keyExtractor={(item, index) => item + index}
         sections={props.items}
-        renderSectionHeader={({ section: { title, _data, subtitle } }) => (
+        renderSectionHeader={({ section: { title, value } }) => (
           <Text style={styles.title}>
-            {title}: <Text style={styles.text}>{subtitle}</Text>
+            {title}: <Text style={styles.text}>{value}</Text>
           </Text>
         )}
         renderItem={({ item }) => <Text style={styles.text}>{item}</Text>}
@@ -47,24 +49,22 @@ const styles = StyleSheet.create({
 });
 
 export const getServerSideProps: GetServerSideProps = async (_context) => {
-  const query = await firebase
-    .firestore()
-    .collection("about")
-    .orderBy("index")
-    .get();
-  const docs = query.docs;
+  const items = (
+    await axios.get(URL, {
+      responseType: "json",
+    })
+  ).data
+    .sort((a, b) =>
+      a.Priority > b.Priority ? 1 : b.Priority > a.Priority ? -1 : 0
+    )
+    .map((item) => ({
+      title: item.Title,
+      value: item.Value,
+      data: item.Details || [],
+    }));
   return {
     props: {
-      items: docs
-        .map((doc) => doc.data())
-        .map(
-          ({ title, value }) =>
-            ({
-              title,
-              data: Array.isArray(value) ? value : [],
-              subtitle: !Array.isArray(value) ? value : "",
-            } as Item)
-        ),
+      items,
     },
   };
 };
