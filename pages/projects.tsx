@@ -15,7 +15,8 @@ type Item = {
 const Projects: NextPage<{ items: Item[] }> = (props) => {
   const renderLink = (link) =>
     link.startsWith("https://") ? (
-      <A href={link} target="_blank">
+      /* @ts-ignore ??? weird missing deprecated a11y props error */
+      <A href={link} target="_blank" accessibilityComponentType>
         {link}
       </A>
     ) : (
