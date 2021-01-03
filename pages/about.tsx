@@ -55,12 +55,11 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
     })
   ).data
     .sort((a, b) =>
-      a.Priority > b.Priority ? 1 : b.Priority > a.Priority ? -1 : 0
+      a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0
     )
     .map((item) => ({
-      title: item.Title,
-      value: item.Value,
-      data: item.Details || [],
+      ...item,
+      data: item.details || [],
     }));
   return {
     props: {
