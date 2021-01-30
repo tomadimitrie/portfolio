@@ -54,9 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
       responseType: "json",
     })
   ).data
-    .sort((a, b) =>
-      a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0
-    )
+    .sort((a, b) => a.priority - b.priority)
     .map((item) => ({
       ...item,
       data: item.details || [],

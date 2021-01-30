@@ -1,8 +1,10 @@
 import React from "react";
 import { View, StyleSheet, FlatList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
-import firebase from "../helpers/firebase";
 import { A } from "@expo/html-elements";
+import axios from "axios";
+
+const URL = "https://tomadimitrie-portfolio-backend.herokuapp.com/projects";
 
 type Item = {
   title: string;
@@ -66,26 +68,14 @@ const styles = StyleSheet.create({
 });
 
 export const getServerSideProps: GetServerSideProps = async (_context) => {
-  const query = await firebase
-    .firestore()
-    .collection("projects")
-    .orderBy("index")
-    .get();
-  const docs = query.docs;
+  const items = (
+    await axios.get(URL, {
+      responseType: "json",
+    })
+  ).data.sort((a, b) => a.priority - b.priority);
   return {
     props: {
-      items: docs
-        .map((doc) => doc.data())
-        .map(
-          ({ title, link, technologies, repo, description }) =>
-            ({
-              title,
-              link,
-              technologies,
-              repo,
-              description,
-            } as Item)
-        ),
+      items,
     },
   };
 };

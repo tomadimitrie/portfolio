@@ -1,8 +1,10 @@
 import React from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
-import firebase from "../helpers/firebase";
 import { Hoverable } from "react-native-web-hooks";
+import axios from "axios";
+
+const URL = "https://tomadimitrie-portfolio-backend.herokuapp.com/landing";
 
 const Index: NextPage<{ text: string }> = (props) => {
   const getIndex = (
@@ -161,14 +163,14 @@ const styles = StyleSheet.create({
 });
 
 export const getServerSideProps: GetServerSideProps = async (_context) => {
-  const doc = await firebase
-    .firestore()
-    .collection("landing")
-    .doc("text")
-    .get();
+  const text = (
+    await axios.get(URL, {
+      responseType: "json",
+    })
+  ).data.value;
   return {
     props: {
-      text: doc.data().value,
+      text,
     },
   };
 };

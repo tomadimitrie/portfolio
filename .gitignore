@@ -19,7 +19,6 @@ yarn-error.log*
 .DS_Store
 
 # misc
-.DS_Store
 .env*
 
 .next/

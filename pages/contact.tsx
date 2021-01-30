@@ -8,7 +8,9 @@ import {
   Pressable,
 } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
-import firebase from "../helpers/firebase";
+import axios from "axios";
+
+const URL = "https://tomadimitrie-portfolio-backend.herokuapp.com/contact";
 
 type Item = {
   title: string;
@@ -57,24 +59,14 @@ const styles = StyleSheet.create({
 });
 
 export const getServerSideProps: GetServerSideProps = async (_context) => {
-  const query = await firebase
-    .firestore()
-    .collection("contact")
-    .orderBy("index")
-    .get();
-  const docs = query.docs;
+  const items = (
+    await axios.get(URL, {
+      responseType: "json",
+    })
+  ).data.sort((a, b) => a.priority - b.priority);
   return {
     props: {
-      items: docs
-        .map((doc) => doc.data())
-        .map(
-          ({ title, value, href }) =>
-            ({
-              title,
-              value,
-              href,
-            } as Item)
-        ),
+      items,
     },
   };
 };

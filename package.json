@@ -9,7 +9,6 @@
     "expo-font": "~8.4.0",
     "expo-gl": "~9.2.0",
     "expo-three": "^5.5.1",
-    "firebase": "^8.2.1",
     "next": "^10.0.4",
     "next-fonts": "^1.4.0",
     "react": "16.13.1",

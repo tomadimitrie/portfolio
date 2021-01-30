@@ -1,19 +1,21 @@
 import React from "react";
 import { View, StyleSheet, SectionList, Text } from "react-native";
 import { NextPage, GetServerSideProps } from "next";
-import firebase from "../helpers/firebase";
+import axios from "axios";
+
+const URL = "https://tomadimitrie-portfolio-backend.herokuapp.com/skills";
 
 type Skill = {
   title: string;
   data: string[];
 };
 
-const Skills: NextPage<{ skills: Skill[] }> = (props) => {
+const Skills: NextPage<{ items: Skill[] }> = (props) => {
   return (
     <View style={styles.skills}>
       <SectionList
         keyExtractor={(item, index) => item + index}
-        sections={props.skills}
+        sections={props.items}
         renderSectionHeader={({ section: { title } }) => (
           <Text style={styles.title}>{title}</Text>
         )}
@@ -48,23 +50,22 @@ const styles = StyleSheet.create({
 });
 
 export const getServerSideProps: GetServerSideProps = async (_context) => {
-  const query = await firebase
-    .firestore()
-    .collection("skills")
-    .orderBy("index")
-    .get();
-  const docs = query.docs;
+  const items = (
+    await axios.get(URL, {
+      responseType: "json",
+    })
+  ).data
+    .sort((a, b) => a.priority - b.priority)
+    .map(
+      ({ title, value }) =>
+        ({
+          title,
+          data: value,
+        } as Skill)
+    );
   return {
     props: {
-      skills: docs
-        .map((doc) => doc.data())
-        .map(
-          ({ title, value }) =>
-            ({
-              title,
-              data: value,
-            } as Skill)
-        ),
+      items,
     },
   };
 };
