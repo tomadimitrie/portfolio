@@ -1,4 +1,4 @@
-# Portfolio (tomadimitrie.me)
+# Portfolio
 
 ## Written in:
 - Next.js + Expo (frontend)
