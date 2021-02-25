@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
-  res.status(200).write(`
+  res.status(200).send(`
 Privacy Policy
 
 Dimitrie-Toma Furdui built the UBB Schedule app as a Free app. This SERVICE is provided by Dimitrie-Toma Furdui at no cost and is intended for use as is.
