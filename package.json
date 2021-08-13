@@ -9,7 +9,7 @@
     "expo-font": "~8.4.0",
     "expo-gl": "~9.2.0",
     "expo-three": "^5.5.1",
-    "next": "^10.0.4",
+    "next": "^11.1.0",
     "next-fonts": "^1.4.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
