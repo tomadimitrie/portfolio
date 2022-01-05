@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Info" ADD COLUMN     "priority" INTEGER NOT NULL DEFAULT 0;

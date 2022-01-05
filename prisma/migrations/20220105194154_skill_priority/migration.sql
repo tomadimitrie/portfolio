@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Skill" ADD COLUMN     "priority" DOUBLE PRECISION NOT NULL DEFAULT 0.0;

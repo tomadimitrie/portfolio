@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Info {
+  id           String  @id @default(uuid())
+  key          String
+  value        String
+  priority     Int     @default(0)
+  continuation Boolean @default(false)
+  href         String?
+}
+
+model SkillCategory {
+  id       String  @id @default(uuid())
+  name     String
+  skills   Skill[]
+  priority Int     @unique
+}
+
+model Skill {
+  id         String        @id @default(uuid())
+  name       String
+  category   SkillCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+  priority   Int
+}
+
+model ExperienceCategory {
+  id         String       @id @default(uuid())
+  name       String
+  experience Experience[]
+  priority   Int          @unique
+}
+
+model Experience {
+  id         String             @id @default(uuid())
+  position   String
+  company    String
+  from       DateTime
+  to         DateTime?
+  priority   Int
+  category   ExperienceCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+}
+
+model Award {
+  id       String @id @default(uuid())
+  award    String
+  event    String
+  priority Int
+}
+
+model Project {
+  id          String  @id @default(uuid())
+  name        String
+  link        String?
+  description String
+  priority    Int
+}
